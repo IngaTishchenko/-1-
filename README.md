@@ -11,9 +11,8 @@
 - **EventLog** — журнал событий с временными метками.
 - **Metrics** — среднее/макс. время ожидания, число остановок.
 - **ElevatorController** — контроллер: принимает заявки, управляет машиной состояний кабины, использует стратегию выбора цели.
-- **MovementStrategy** — интерфейс стратегии (полиморфизм):
-  - `CollectingStrategy` — сбор попутных заявок (основной алгоритм базового уровня);
-  - `SimpleOrderStrategy` — по порядку поступления (FIFO).
+- **MovementStrategy** — интерфейс стратегии (полиморфный метод выбора цели).
+- **CollectingStrategy** — реализация: сбор попутных заявок (алгоритм базового уровня).
 
 ### Машина состояний кабины
 
@@ -95,10 +94,10 @@ com.elevator
 ├── model                   — Building, Elevator, FloorRequest, CabinState,
 │                             Direction, SimulationClock, EventLog, Metrics
 ├── controller              — ElevatorController, MovementStrategy,
-│                             CollectingStrategy, SimpleOrderStrategy
+│                             CollectingStrategy
 └── exception               — InvalidFloorException
 ```
 
 ## Демонстрация
 
-`Demo` создаёт здание (1–10), кабину, ≥ 35 заявок, запускает симуляцию со стратегией «попутный сбор», выводит метрики и журнал, затем сравнивает две стратегии на одном наборе заявок.
+`Demo` создаёт здание (1–10), кабину, ≥ 35 заявок, запускает симуляцию со стратегией «попутный сбор», выводит метрики и журнал событий.

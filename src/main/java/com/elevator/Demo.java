@@ -3,7 +3,6 @@ package com.elevator;
 import com.elevator.controller.CollectingStrategy;
 import com.elevator.controller.ElevatorController;
 import com.elevator.controller.MovementStrategy;
-import com.elevator.controller.SimpleOrderStrategy;
 import com.elevator.exception.InvalidFloorException;
 import com.elevator.model.*;
 
@@ -55,12 +54,10 @@ public class Demo {
         System.out.println("--- Добавление 35 заявок ---");
         List<FloorRequest> generated = generateRequests(35, building, clock);
         for (FloorRequest r : generated) {
-            // Устанавливаем время заявки через часы (для реалистичности добавляем с небольшим сдвигом)
-            clock.advance(1); // небольшая пауза между нажатиями
+            clock.advance(1);
             try {
                 controller.addRequest(r.floor(), r.direction());
             } catch (IllegalArgumentException ex) {
-                // крайние этажи — пропускаем некорректное направление
                 System.out.println("  пропущена некорректная заявка: " + r + " (" + ex.getMessage() + ")");
             }
         }
@@ -69,7 +66,7 @@ public class Demo {
         System.out.println();
 
         // --- Запуск симуляции ---
-        System.out.println("--- Запуск симуляции (CollectingStrategy) ---");
+        System.out.println("--- Запуск симуляции (сбор попутных заявок) ---");
         int steps = controller.runUntilIdle(10_000);
         System.out.println("Выполнено шагов: " + steps);
         System.out.println("Финальное состояние кабины: " + elevator);
@@ -85,7 +82,7 @@ public class Demo {
         System.out.println("  Обслужено заявок: " + metrics.getServedRequestCount());
         System.out.println();
 
-        // --- Журнал (первые и последние записи) ---
+        // --- Журнал ---
         System.out.println("--- Журнал событий (всего " + log.size() + ") ---");
         var entries = log.getEntries();
         int show = Math.min(15, entries.size());
@@ -101,14 +98,11 @@ public class Demo {
             }
         }
         System.out.println();
-
-        // --- Демонстрация второй стратегии (для сравнения) ---
-        System.out.println("--- Сравнение со SimpleOrderStrategy ---");
-        runComparison(building);
+        System.out.println("=== Демонстрация завершена ===");
     }
 
     private static List<FloorRequest> generateRequests(int count, Building building, SimulationClock clock) {
-        Random rnd = new Random(42); // фиксированный seed для воспроизводимости
+        Random rnd = new Random(42);
         List<FloorRequest> list = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             int floor = building.getMinFloor() + rnd.nextInt(building.floorCount());
@@ -123,50 +117,5 @@ public class Demo {
             list.add(new FloorRequest(floor, dir, clock.now() + i));
         }
         return list;
-    }
-
-    private static void runComparison(Building building) {
-        // Одинаковый набор заявок для обеих стратегий
-        List<int[]> rawRequests = List.of(
-                new int[]{3, 1},  // floor, dir (1=UP, 0=DOWN)
-                new int[]{7, 0},
-                new int[]{2, 1},
-                new int[]{9, 0},
-                new int[]{5, 1},
-                new int[]{4, 0},
-                new int[]{8, 1},
-                new int[]{1, 1},
-                new int[]{6, 0},
-                new int[]{10, 0}
-        );
-
-        System.out.println("Набор из " + rawRequests.size() + " заявок:");
-
-        Metrics m1 = runWithStrategy(building, new CollectingStrategy(), rawRequests);
-        Metrics m2 = runWithStrategy(building, new SimpleOrderStrategy(), rawRequests);
-
-        System.out.println("\nТаблица сравнения:");
-        System.out.printf("%-30s %12s %12s %10s%n", "Стратегия", "Avg wait", "Max wait", "Stops");
-        System.out.printf("%-30s %12.2f %12d %10d%n",
-                "Collecting", m1.averageWaitingTime(), m1.maxWaitingTime(), m1.getStopCount());
-        System.out.printf("%-30s %12.2f %12d %10d%n",
-                "SimpleOrder", m2.averageWaitingTime(), m2.maxWaitingTime(), m2.getStopCount());
-    }
-
-    private static Metrics runWithStrategy(Building building, MovementStrategy strategy, List<int[]> raw) {
-        Elevator elev = new Elevator("cmp", 1);
-        SimulationClock clk = new SimulationClock();
-        EventLog log = new EventLog();
-        Metrics m = new Metrics();
-        ElevatorController ctrl = new ElevatorController(building, elev, clk, strategy, log, m);
-
-        for (int[] r : raw) {
-            Direction d = r[1] == 1 ? Direction.UP : Direction.DOWN;
-            ctrl.addRequest(r[0], d);
-            clk.advance(2);
-        }
-        ctrl.runUntilIdle(5000);
-        System.out.println("  " + strategy.name() + " → " + m + ", time=" + clk.now());
-        return m;
     }
 }

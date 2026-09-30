@@ -3,7 +3,7 @@ package com.elevator;
 import com.elevator.controller.CollectingStrategy;
 import com.elevator.controller.ElevatorController;
 import com.elevator.controller.MovementStrategy;
-import com.elevator.controller.SimpleOrderStrategy;
+
 import com.elevator.exception.InvalidFloorException;
 import com.elevator.model.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -186,20 +186,6 @@ class ElevatorModelTest {
         assertEquals(2, next.get()); // ближайший этаж по пути вверх
     }
 
-
-    @Test
-    @DisplayName("SimpleOrderStrategy выбирает по времени")
-    void simpleOrderStrategyByTime() {
-        MovementStrategy simple = new SimpleOrderStrategy();
-        var requests = List.of(
-                new FloorRequest(8, Direction.UP, 5),
-                new FloorRequest(3, Direction.UP, 1), // раньше
-                new FloorRequest(5, Direction.DOWN, 3)
-        );
-        Optional<Integer> next = simple.chooseNextTarget(1, null, requests);
-        assertTrue(next.isPresent());
-        assertEquals(3, next.get());
-    }
 
     // ---------- 8. Controller behaviour ----------
 
