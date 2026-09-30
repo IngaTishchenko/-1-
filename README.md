@@ -37,23 +37,54 @@ IDLE → MOVING → OPENING_DOORS → WAITING → (MOVING | IDLE)
 - `var` для локальных переменных
 - enum с полями и методами (`CabinState`, `Direction`)
 
+## Требования
+
+- **JDK 21** (не JRE) — https://adoptium.net/ или Oracle/Microsoft OpenJDK
+- Maven **не обязателен**: в проекте есть Maven Wrapper (`mvnw` / `mvnw.cmd`)
+
+Проверка Java:
+
+```text
+java -version
+javac -version
+```
+
+Оба должны показывать 21.x.
+
 ## Сборка и запуск
 
+### Windows (PowerShell / cmd) — без установки Maven
+
+```powershell
+# в папке elevator-sim
+.\mvnw.cmd clean package
+.\mvnw.cmd test
+.\mvnw.cmd exec:java "-Dexec.mainClass=com.elevator.Demo"
+```
+
+Или после `package`:
+
+```powershell
+java -Dfile.encoding=UTF-8 -jar target\elevator-sim-1.0-SNAPSHOT.jar
+```
+
+### Linux / macOS
+
 ```bash
-# Сборка
-mvn clean package
-
-# Запуск демонстрации
-mvn exec:java -Dexec.mainClass="com.elevator.Demo"
+./mvnw clean package
+./mvnw test
+./mvnw exec:java -Dexec.mainClass="com.elevator.Demo"
 # или
-java -jar target/elevator-sim-1.0-SNAPSHOT.jar
+java -Dfile.encoding=UTF-8 -jar target/elevator-sim-1.0-SNAPSHOT.jar
+```
 
-# Тесты
+### Если Maven уже установлен глобально
+
+```bash
+mvn clean package
+mvn exec:java -Dexec.mainClass="com.elevator.Demo"
 mvn test
-
-# Javadoc
 mvn javadoc:javadoc
-# отчёт: target/site/apidocs/index.html
 ```
 
 ## Структура пакетов
