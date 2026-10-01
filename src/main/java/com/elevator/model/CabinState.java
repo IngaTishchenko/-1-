@@ -1,25 +1,28 @@
 package com.elevator.model;
 
 /**
- * Состояние кабины лифта (машина состояний).
+ * Состояние кабины лифта в машине состояний.
  * <p>
- * Переходы:
- * <ul>
- *   <li>{@link #IDLE} → {@link #MOVING} при появлении цели</li>
- *   <li>{@link #MOVING} → {@link #OPENING_DOORS} при достижении этажа</li>
- *   <li>{@link #OPENING_DOORS} → {@link #WAITING} после открытия</li>
- *   <li>{@link #WAITING} → {@link #MOVING} или {@link #IDLE} после посадки</li>
- * </ul>
+ * Типичные переходы:
+ * {@link #IDLE} → {@link #MOVING} → {@link #OPENING_DOORS} → {@link #WAITING}
+ * → снова {@link #MOVING} или {@link #IDLE}.
  */
+
 public enum CabinState {
-    /** Стоит, нет активных целей */
+    /** Кабина стоит, активных целей нет. */
     IDLE("Стоит"),
-    /** Движется к цели */
+    /** Кабина движется между этажами. */
     MOVING("Едет"),
-    /** Открывает двери */
+    /** Кабина открывает двери. */
     OPENING_DOORS("Открывает двери"),
-    /** Ждёт посадки/высадки пассажиров */
+    /** Кабина ждёт посадки или высадки пассажиров. */
     WAITING("Ждёт посадки");
+
+    /**
+     * Возвращает человекочитаемое описание состояния.
+     *
+     * @return описание на русском языке
+     */
 
     private final String description;
 
@@ -27,16 +30,10 @@ public enum CabinState {
         this.description = description;
     }
 
-    /**
-     * Человекочитаемое описание состояния.
-     *
-     * @return описание
-     */
     public String getDescription() {
         return description;
     }
 
-    @Override
     public String toString() {
         return description;
     }

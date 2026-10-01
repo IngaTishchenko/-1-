@@ -10,17 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * Консольная демонстрация симуляции лифта (базовый уровень).
- * <p>
- * Наполняет модель ≥ 30 объектами и последовательно показывает все операции.
- */
 public class Demo {
 
     public static void main(String[] args) {
         System.out.println("=== Симуляция лифта (базовый уровень) ===\n");
 
-        // --- Создание модели ---
         Building building = new Building(1, 10);
         System.out.println("1. Здание: " + building + " (" + building.floorCount() + " этажей)");
 
@@ -40,7 +34,6 @@ public class Demo {
                 building, elevator, clock, strategy, log, metrics);
         System.out.println("5. Контроллер создан\n");
 
-        // --- Демонстрация исключения ---
         System.out.println("--- Проверка исключения InvalidFloorException ---");
         try {
             controller.addRequest(99, Direction.UP);
@@ -50,7 +43,6 @@ public class Demo {
         }
         System.out.println();
 
-        // --- Генерация ≥ 30 заявок ---
         System.out.println("--- Добавление 35 заявок ---");
         List<FloorRequest> generated = generateRequests(35, building, clock);
         for (FloorRequest r : generated) {
@@ -65,7 +57,6 @@ public class Demo {
         System.out.println("Всего объектов FloorRequest создано: " + generated.size());
         System.out.println();
 
-        // --- Запуск симуляции ---
         System.out.println("--- Запуск симуляции (сбор попутных заявок) ---");
         int steps = controller.runUntilIdle(10_000);
         System.out.println("Выполнено шагов: " + steps);
@@ -73,7 +64,6 @@ public class Demo {
         System.out.println("Время симуляции: " + clock.now() + " тиков");
         System.out.println();
 
-        // --- Метрики ---
         System.out.println("--- Метрики ---");
         System.out.println(metrics);
         System.out.printf("  Среднее время ожидания: %.2f тиков%n", metrics.averageWaitingTime());
@@ -82,7 +72,6 @@ public class Demo {
         System.out.println("  Обслужено заявок: " + metrics.getServedRequestCount());
         System.out.println();
 
-        // --- Журнал ---
         System.out.println("--- Журнал событий (всего " + log.size() + ") ---");
         var entries = log.getEntries();
         int show = Math.min(15, entries.size());

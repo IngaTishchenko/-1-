@@ -3,25 +3,27 @@ package com.elevator.model;
 import java.util.Objects;
 
 /**
- * Кабина лифта: текущий этаж, состояние, направление.
+ * Кабина лифта: идентификатор, текущий этаж, состояние и направление.
  * <p>
- * Инкапсулирует изменяемое состояние. Идентификация по id.
+ * Идентичность задаётся полем {@code id} ({@code equals}/{@code hashCode}).
  */
+
 public final class Elevator {
+
+    /**
+     * Создаёт кабину на указанном этаже в состоянии {@link CabinState#IDLE}.
+     *
+     * @param id           идентификатор кабины (не пустой)
+     * @param initialFloor начальный этаж
+     * @throws NullPointerException     если {@code id == null}
+     * @throws IllegalArgumentException если {@code id} пустой или из пробелов
+     */
 
     private final String id;
     private int currentFloor;
     private CabinState state;
-    private Direction direction; // null, если IDLE
+    private Direction direction;
 
-    /**
-     * Создаёт кабину на указанном этаже в состоянии IDLE.
-     *
-     * @param id           идентификатор кабины
-     * @param initialFloor начальный этаж
-     * @throws NullPointerException     если id == null
-     * @throws IllegalArgumentException если id пустой
-     */
     public Elevator(String id, int initialFloor) {
         Objects.requireNonNull(id, "id must not be null");
         if (id.isBlank()) {
@@ -33,39 +35,30 @@ public final class Elevator {
         this.direction = null;
     }
 
-    /**
-     * @return идентификатор
-     */
     public String getId() {
         return id;
     }
 
-    /**
-     * @return текущий этаж
-     */
     public int getCurrentFloor() {
         return currentFloor;
     }
 
-    /**
-     * @return текущее состояние
-     */
     public CabinState getState() {
         return state;
     }
 
-    /**
-     * @return текущее направление или {@code null}, если стоит
-     */
     public Direction getDirection() {
         return direction;
     }
 
     /**
-     * Переводит кабину в указанное состояние.
+     * Устанавливает состояние кабины.
+     * При переходе в {@link CabinState#IDLE} направление сбрасывается в {@code null}.
      *
      * @param newState новое состояние
+     * @throws NullPointerException если {@code newState == null}
      */
+
     public void setState(CabinState newState) {
         this.state = Objects.requireNonNull(newState);
         if (newState == CabinState.IDLE) {
@@ -74,10 +67,11 @@ public final class Elevator {
     }
 
     /**
-     * Задаёт направление движения.
+     * Устанавливает направление движения.
      *
-     * @param direction направление (может быть null)
+     * @param direction направление; может быть {@code null}
      */
+
     public void setDirection(Direction direction) {
         this.direction = direction;
     }
@@ -85,8 +79,10 @@ public final class Elevator {
     /**
      * Перемещает кабину на один этаж в текущем направлении.
      *
-     * @throws IllegalStateException если направление не задано или состояние не MOVING
+     * @throws IllegalStateException если состояние не {@link CabinState#MOVING}
+     *                               или направление не задано
      */
+
     public void moveOneFloor() {
         if (state != CabinState.MOVING) {
             throw new IllegalStateException("Cannot move when state is " + state);
@@ -97,28 +93,20 @@ public final class Elevator {
         currentFloor += (direction == Direction.UP ? 1 : -1);
     }
 
-    /**
-     * Мгновенно перемещает кабину на указанный этаж (для тестов/инициализации).
-     *
-     * @param floor целевой этаж
-     */
     public void setCurrentFloor(int floor) {
         this.currentFloor = floor;
     }
 
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Elevator elevator)) return false;
         return id.equals(elevator.id);
     }
 
-    @Override
     public int hashCode() {
         return id.hashCode();
     }
 
-    @Override
     public String toString() {
         return String.format("Elevator[%s, floor=%d, state=%s, dir=%s]",
                 id, currentFloor, state, direction);

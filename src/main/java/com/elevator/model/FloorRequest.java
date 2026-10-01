@@ -3,24 +3,25 @@ package com.elevator.model;
 import java.util.Objects;
 
 /**
- * Заявка на вызов лифта: этаж, направление и момент нажатия (модельное время).
+ * Заявка на вызов лифта: этаж, направление и момент нажатия кнопки.
  * <p>
- * Неизменяемый value-object. equals/hashCode по всем полям.
+ * Неизменяемый value-object ({@code record}).
+ * Равенство ({@code equals}/{@code hashCode}) определяется всеми полями.
  *
- * @param floor     номер этажа
- * @param direction желаемое направление
- * @param time      момент нажатия кнопки (модельные тики)
+ * @param floor     номер этажа вызова
+ * @param direction желаемое направление движения
+ * @param time      модельное время нажатия (тики), не отрицательное
  */
+
 public record FloorRequest(int floor, Direction direction, long time) {
 
     /**
-     * Создаёт заявку с проверкой корректности направления.
+     * Проверяет корректность полей при создании заявки.
      *
-     * @param floor     этаж
-     * @param direction направление
-     * @param time      время
-     * @throws NullPointerException если direction == null
+     * @throws NullPointerException     если {@code direction == null}
+     * @throws IllegalArgumentException если {@code time < 0}
      */
+
     public FloorRequest {
         Objects.requireNonNull(direction, "direction must not be null");
         if (time < 0) {
@@ -29,12 +30,13 @@ public record FloorRequest(int floor, Direction direction, long time) {
     }
 
     /**
-     * Создаёт заявку без явного времени (время = 0).
+     * Создаёт заявку с временем {@code 0}.
      *
-     * @param floor     этаж
+     * @param floor     номер этажа
      * @param direction направление
      * @return новая заявка
      */
+
     public static FloorRequest of(int floor, Direction direction) {
         return new FloorRequest(floor, direction, 0L);
     }

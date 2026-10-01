@@ -15,9 +15,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * JUnit 5 тесты модели лифта (≥ 12 сценариев).
- */
+
 class ElevatorModelTest {
 
     private Building building;
@@ -39,7 +37,6 @@ class ElevatorModelTest {
         controller = new ElevatorController(building, elevator, clock, strategy, log, metrics);
     }
 
-    // ---------- 1. Building ----------
 
     @Test
     @DisplayName("Building: валидный диапазон этажей")
@@ -59,7 +56,6 @@ class ElevatorModelTest {
         assertThrows(IllegalArgumentException.class, () -> new Building(5, 3));
     }
 
-    // ---------- 2. InvalidFloorException ----------
 
     @Test
     @DisplayName("addRequest на несуществующий этаж → InvalidFloorException")
@@ -81,7 +77,6 @@ class ElevatorModelTest {
         assertThrows(InvalidFloorException.class, () -> building.requireValidFloor(11));
     }
 
-    // ---------- 3. FloorRequest equals/hashCode (record) ----------
 
     @Test
     @DisplayName("FloorRequest: equals/hashCode контракт")
@@ -108,7 +103,6 @@ class ElevatorModelTest {
                 () -> new FloorRequest(1, Direction.UP, -1));
     }
 
-    // ---------- 4. Elevator equals/hashCode ----------
 
     @Test
     @DisplayName("Elevator: equals/hashCode по id")
@@ -131,7 +125,6 @@ class ElevatorModelTest {
         assertThrows(NullPointerException.class, () -> new Elevator(null, 1));
     }
 
-    // ---------- 5. SimulationClock ----------
 
     @Test
     @DisplayName("SimulationClock: advance и now")
@@ -144,7 +137,6 @@ class ElevatorModelTest {
         assertThrows(IllegalArgumentException.class, () -> clock.advance(-1));
     }
 
-    // ---------- 6. Metrics ----------
 
     @Test
     @DisplayName("Metrics: average, max, stops")
@@ -187,7 +179,6 @@ class ElevatorModelTest {
     }
 
 
-    // ---------- 8. Controller behaviour ----------
 
     @Test
     @DisplayName("Контроллер обслуживает одну заявку")
@@ -207,7 +198,6 @@ class ElevatorModelTest {
     @Test
     @DisplayName("Контроллер собирает попутные заявки")
     void controllerCollectsAlongTheWay() {
-        // Кабина на 1, заяв на 3 и 7 вверх
         controller.addRequest(3, Direction.UP);
         controller.addRequest(7, Direction.UP);
 
@@ -215,7 +205,6 @@ class ElevatorModelTest {
 
         assertEquals(0, controller.pendingCount());
         assertEquals(2, metrics.getServedRequestCount());
-        // Должно быть не больше 2 остановок (3 и 7)
         assertTrue(metrics.getStopCount() <= 3);
     }
 
@@ -233,7 +222,6 @@ class ElevatorModelTest {
                 () -> controller.addRequest(10, Direction.UP));
     }
 
-    // ---------- 9. EventLog defensive copy ----------
 
     @Test
     @DisplayName("EventLog: getEntries возвращает immutable snapshot")
@@ -244,7 +232,6 @@ class ElevatorModelTest {
         assertThrows(UnsupportedOperationException.class, () -> entries.add(new EventLog.Entry(1, "x")));
     }
 
-    // ---------- 10. Direction.opposite ----------
 
     @Test
     @DisplayName("Direction.opposite")
@@ -253,7 +240,6 @@ class ElevatorModelTest {
         assertEquals(Direction.UP, Direction.DOWN.opposite());
     }
 
-    // ---------- 11. CabinState description ----------
 
     @Test
     @DisplayName("CabinState имеет описание")
@@ -262,7 +248,6 @@ class ElevatorModelTest {
         assertEquals("Едет", CabinState.MOVING.getDescription());
     }
 
-    // ---------- 12. Metrics equals ----------
 
     @Test
     @DisplayName("Metrics equals/hashCode")

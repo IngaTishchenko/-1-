@@ -1,8 +1,10 @@
 package com.elevator.exception;
 
 /**
- * Исключение при попытке создать заявку или обратиться к несуществующему этажу.
+ * Исключение при обращении к этажу, которого нет в здании.
  */
+
+
 public class InvalidFloorException extends RuntimeException {
 
     private final int floor;
@@ -10,12 +12,13 @@ public class InvalidFloorException extends RuntimeException {
     private final int maxFloor;
 
     /**
-     * Создаёт исключение с информацией о допустимом диапазоне.
+     * Создаёт исключение с указанием запрошенного этажа и допустимого диапазона.
      *
-     * @param floor    запрошенный этаж
+     * @param floor    запрошенный (несуществующий) этаж
      * @param minFloor минимальный этаж здания
      * @param maxFloor максимальный этаж здания
      */
+
     public InvalidFloorException(int floor, int minFloor, int maxFloor) {
         super(String.format(
                 "Этаж %d не существует. Допустимый диапазон: [%d, %d]",
@@ -26,8 +29,9 @@ public class InvalidFloorException extends RuntimeException {
     }
 
     /**
-     * @return запрошенный (неверный) этаж
+     * @return запрошенный этаж
      */
+
     public int getFloor() {
         return floor;
     }
@@ -35,6 +39,7 @@ public class InvalidFloorException extends RuntimeException {
     /**
      * @return минимальный этаж здания
      */
+
     public int getMinFloor() {
         return minFloor;
     }
@@ -42,6 +47,7 @@ public class InvalidFloorException extends RuntimeException {
     /**
      * @return максимальный этаж здания
      */
+
     public int getMaxFloor() {
         return maxFloor;
     }
